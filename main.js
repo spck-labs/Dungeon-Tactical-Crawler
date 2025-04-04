@@ -1,7 +1,7 @@
 // Constants
 const TILE_SIZE = 32;
-const MAP_WIDTH = 800;
-const MAP_HEIGHT = 600;
+const MAP_WIDTH = window.innerWidth;
+const MAP_HEIGHT = window.innerHeight;
 const PLAYER_MOVE_SPEED = 3;
 const PLAYER_VISIBLE_RADIUS = 5;
 
@@ -86,8 +86,17 @@ function init() {
     
     // Start game loop
     gameLoop(ctx);
+    
+    
 }
 
+  // Resize canvas to fit the window
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    renderGame();
+  }
+  
 function gameLoop(ctx) {
     update();
     render(ctx);
@@ -235,6 +244,11 @@ function handleClick(event) {
         return;
     }
     
+    // Check if tile is reachable by the player 
+    if (!isTileReachable(player, tileX, tileY)) {
+      return;
+    }
+    
     // Get player's current tile position
     const playerTileX = Math.floor(player.x / TILE_SIZE);
     const playerTileY = Math.floor(player.y / TILE_SIZE);
@@ -350,6 +364,10 @@ function reconstructPath(cameFrom, current) {
 function heuristic(x1, y1, x2, y2) {
     // Manhattan distance
     return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+}
+
+function isTileReachable(player, x, y) {
+  return !!player.reachableTiles.find(t => t.x === x && t.y === y)
 }
 
 function isTileWalkable(x, y) {
