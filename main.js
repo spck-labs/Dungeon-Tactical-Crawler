@@ -7,8 +7,8 @@ const PLAYER_VISIBLE_RADIUS = 5;
 
 // Game State
 let player = {
-    x: 0,
-    y: 0,
+    x: 16.5*TILE_SIZE,
+    y: 9.5*TILE_SIZE,
     targetX: null,
     targetY: null,
     path: [],
@@ -61,12 +61,6 @@ function init() {
         gameMap[y] = [];
         for (let x = 0; x < rows[y].length; x++) {
             gameMap[y][x] = rows[y][x];
-            
-            // Set player's initial position to the first floor tile
-            if (rows[y][x] === '.' && player.x === 0 && player.y === 0) {
-                player.x = x * TILE_SIZE + TILE_SIZE / 2;
-                player.y = y * TILE_SIZE + TILE_SIZE / 2;
-            }
         }
     }
 
