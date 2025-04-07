@@ -4,6 +4,11 @@ A tile-based adventure game created using [Claude AI](https://anthropic.com) and
 
 - Tile-based movement system
 - A* algorithm for path finding
+- Flood-fill algorithm showing range of walkable tiles
+
+# Demo
+
+[1 Basic Tilebase Game with Pathfinding](https://spck.io/labs/OPkBxQEOo)
 
 ## Development
 
