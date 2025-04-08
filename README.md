@@ -10,6 +10,10 @@ A tile-based adventure game created using [Claude AI](https://anthropic.com) and
 
 [1 Basic Tilebase Game with Pathfinding](https://spck.io/labs/OPkBxQEOo)
 
+# Map Generation
+
+This uses the map generation algorithm from [this project](https://github.com/spck-labs/Dungeon-Map-Generator) as the base for procedurally generating the map.
+
 ## Development
 
 This project is a WIP. Star the [github repo](https://github.com/spck-labs/Dungeon-Tactical-Crawler) if you want to see more.

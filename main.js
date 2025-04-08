@@ -59,8 +59,6 @@ function init() {
   
   // Start game loop
   gameLoop(ctx);
-  
-  
 }
 
 // Resize canvas to fit the window
