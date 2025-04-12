@@ -399,39 +399,80 @@ function scaleMap(asciiMap, n) {
     return scaledLines.join('\n');
 }
 
-function generateDungeon() {
-  const generator = new WFCDungeonGenerator(48, 48);
-  const dungeonMap = generator.generate();
-  
-  // Optionally, create a more visual display
-  const visualOutput = document.getElementById('visual-output');
-  if (visualOutput) {
-    visualOutput.innerHTML = '';
-    const lines = dungeonMap.split('\n');
-    
-    const table = document.createElement('table');
-    table.style.borderCollapse = 'collapse';
-    
-    for (const line of lines) {
-      const row = document.createElement('tr');
-      for (const char of line) {
-        const cell = document.createElement('td');
-        cell.style.width = '10px';
-        cell.style.height = '10px';
-        
-        if (char === '#') {
-          cell.style.backgroundColor = 'black';
-        } else if (char === '.') {
-          cell.style.backgroundColor = 'white';
-        } else if (char === '+') {
-          cell.style.backgroundColor = 'brown';
-        }
-        
-        row.appendChild(cell);
-      }
-      table.appendChild(row);
-    }
-    
-    visualOutput.appendChild(table);
+/**
+ * Generates starting positions for the player and enemies in a dungeon.
+ * 
+ * @param {string} dungeonMap - The ASCII dungeon map
+ * @param {number} numEnemies - Number of enemies to place
+ * @param {number} minEnemyDistance - Minimum distance from player to enemy (default: 5)
+ * @returns {Object} Object containing player position and array of enemy positions
+ */
+function generateStartingPositions(dungeonMap, numEnemies, minEnemyDistance = 5) {
+  // Validate inputs
+  if (typeof dungeonMap !== 'string' || dungeonMap.trim() === '') {
+    throw new Error('Input map must be a non-empty string');
   }
+  
+  if (!Number.isInteger(numEnemies) || numEnemies < 0) {
+    throw new Error('Number of enemies must be a non-negative integer');
+  }
+  
+  // Parse the map
+  const lines = dungeonMap.split('\n');
+  const height = lines.length;
+  const width = lines[0].length;
+  
+  // Find all valid floor positions
+  const floorPositions = [];
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if (lines[y][x] === '.' || lines[y][x] === '+') {
+        floorPositions.push({ y, x });
+      }
+    }
+  }
+  
+  if (floorPositions.length === 0) {
+    throw new Error('No valid floor positions found in the map');
+  }
+  
+  // Choose a random position for the player
+  const playerIndex = Math.floor(Math.random() * floorPositions.length);
+  const playerPos = floorPositions[playerIndex];
+  
+  // Remove the player position from available positions
+  floorPositions.splice(playerIndex, 1);
+  
+  // Calculate Manhattan distance between positions
+  const distance = (pos1, pos2) => {
+    return Math.abs(pos1.y - pos2.y) + Math.abs(pos1.x - pos2.x);
+  };
+  
+  // Find positions for enemies
+  const enemyPositions = [];
+  const actualEnemyCount = Math.min(numEnemies, floorPositions.length);
+  
+  // Filter positions that are far enough from the player
+  let validEnemyPositions = floorPositions.filter(pos => 
+    distance(pos, playerPos) >= minEnemyDistance
+  );
+  
+  // If not enough valid positions, fall back to all available positions
+  if (validEnemyPositions.length < actualEnemyCount) {
+    validEnemyPositions = floorPositions;
+  }
+  
+  // Choose random positions for enemies
+  for (let i = 0; i < actualEnemyCount; i++) {
+    if (validEnemyPositions.length === 0) break;
+    
+    const enemyIndex = Math.floor(Math.random() * validEnemyPositions.length);
+    enemyPositions.push(validEnemyPositions[enemyIndex]);
+    validEnemyPositions.splice(enemyIndex, 1);
+  }
+  
+  return {
+    player: playerPos,
+    enemies: enemyPositions
+  };
 }
