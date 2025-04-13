@@ -476,3 +476,13 @@ function generateStartingPositions(dungeonMap, numEnemies, minEnemyDistance = 5)
     enemies: enemyPositions
   };
 }
+
+function isTileWalkable(x, y) {
+  // Check map boundaries
+  if (x < 0 || y < 0 || y >= gameMap.length || x >= gameMap[y].length) {
+    return false;
+  }
+  
+  const tileType = gameMap[y][x];
+  return tileset[tileType] && tileset[tileType].walkable;
+}
